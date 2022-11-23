@@ -13,11 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eclipse.persistence.jpa.config.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  *
@@ -27,8 +28,8 @@ import org.eclipse.persistence.jpa.config.Cascade;
 @Getter
 @Setter
 @Entity
-@Table(name = "Funcionario")
-public class FuncionarioModel implements Serializable {
+@Table(name = "Worker")
+public class WorkerModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -36,31 +37,29 @@ public class FuncionarioModel implements Serializable {
     
     @NotBlank
     private String nome;
+    
+    @NotBlank
+    @Email
+    private String email;
    
     private String foto;
     
     @NotBlank
     private String RG;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn
-    private DepartamentoModel IdDepartamento;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private DepartamentModel Departament;
 
-    public FuncionarioModel() {
-    }
-    
-    public FuncionarioModel(long id, String nome, String foto, String RG, DepartamentoModel IdDepartamento) {
-        this.id = id;
-        this.nome = nome;
-        this.foto = foto;
-        this.RG = RG;
-        this.IdDepartamento = IdDepartamento;
+    public WorkerModel() {
     }
 
-    public FuncionarioModel(String nome, String foto, String RG, DepartamentoModel IdDepartamento) {
+    public WorkerModel(String nome, String email, String foto, String RG, DepartamentModel Departament) {
         this.nome = nome;
+        this.email = email;
         this.foto = foto;
         this.RG = RG;
-        this.IdDepartamento = IdDepartamento;
+        this.Departament = Departament;
     }
 }

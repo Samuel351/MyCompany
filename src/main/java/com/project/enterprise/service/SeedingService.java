@@ -4,13 +4,13 @@
  */
 package com.project.enterprise.service;
 
-import com.project.enterprise.model.DepartamentoModel;
-import com.project.enterprise.model.FuncionarioModel;
-import com.project.enterprise.repository.DepartamentoRepository;
-import com.project.enterprise.repository.FuncionarioRepository;
+import com.project.enterprise.model.DepartamentModel;
+import com.project.enterprise.model.WorkerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import com.project.enterprise.repository.DepartamentRepository;
+import com.project.enterprise.repository.WorkerRepository;
 
 /**
  *
@@ -21,17 +21,24 @@ import org.springframework.stereotype.Component;
 public class SeedingService implements CommandLineRunner {
     
     @Autowired
-    DepartamentoRepository departamentoRepository;
+    DepartamentRepository departamentoRepository;
     
     @Autowired
-    FuncionarioRepository funcionarioRepository;
+    WorkerRepository funcionarioRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        departamentoRepository.save(new DepartamentoModel("Vendas", "VEN"));
+        departamentoRepository.save(new DepartamentModel("Vendas", "VEN"));
+        departamentoRepository.save(new DepartamentModel("Marketing", "MAR"));
         
-        funcionarioRepository.save(new FuncionarioModel("Jonas", "foto", "3063534", new DepartamentoModel(1)));
-        funcionarioRepository.save(new FuncionarioModel("James", "foto", "30623454", new DepartamentoModel(1)));
+        funcionarioRepository.save(new WorkerModel("Jonas", "jonas@gmail.com","foto", "3063534", new DepartamentModel(1)));
+        funcionarioRepository.save(new WorkerModel("James","james@gmail.com" ,"foto", "30623454", new DepartamentModel(2)));
+        funcionarioRepository.save(new WorkerModel("Carlos", "carlo@gmail.com","foto", "3063534", new DepartamentModel(1)));
+        funcionarioRepository.save(new WorkerModel("Carla","carla@gmail.com" ,"foto", "30623454", new DepartamentModel(2)));
+        funcionarioRepository.save(new WorkerModel("Emily", "emily@gmail.com","foto", "3063534", new DepartamentModel(1)));
+        funcionarioRepository.save(new WorkerModel("Steve","steve@gmail.com" ,"foto", "30623454", new DepartamentModel(2)));
+        funcionarioRepository.save(new WorkerModel("Carol", "carol@gmail.com","foto", "3063534", new DepartamentModel(1)));
+        funcionarioRepository.save(new WorkerModel("Giovanne","giovanne@gmail.com" ,"foto", "30623454", new DepartamentModel(2)));
     }
     
 }

@@ -4,7 +4,7 @@
  */
 package com.project.enterprise.repository;
 
-import com.project.enterprise.model.FuncionarioModel;
+import com.project.enterprise.model.DepartamentModel;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface FuncionarioRepository extends CrudRepository<FuncionarioModel, Long> {
+public interface DepartamentRepository extends CrudRepository<DepartamentModel, Long>{
     
+    boolean existsByNome(final String nome);
+    boolean existsBySigla(final String sigla);
 }

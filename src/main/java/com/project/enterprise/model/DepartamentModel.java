@@ -22,8 +22,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Departamento")
-public class DepartamentoModel implements Serializable {
+@Table(name = "Departament")
+public class DepartamentModel implements Serializable {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -36,24 +36,15 @@ public class DepartamentoModel implements Serializable {
     @Size(min = 2)
     private String sigla;
 
-    public DepartamentoModel() {
+    public DepartamentModel() {
     }
-    
-    public DepartamentoModel(long id, String nome, String sigla) {
-        this.id = id;
-        this.nome = nome;
-        this.sigla = sigla;
-    }
-    
-     public DepartamentoModel(String nome, String sigla) {
+   
+     public DepartamentModel(String nome, String sigla) {
         this.nome = nome;
         this.sigla = sigla;
     }
 
-    public DepartamentoModel(long id) {
+    public DepartamentModel(long id) {
         this.id = id;
     }
-    
-    
-    
 }
