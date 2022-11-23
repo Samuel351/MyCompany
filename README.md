@@ -12,3 +12,9 @@
 ### Listagem de funcionários
 ![image](https://user-images.githubusercontent.com/72561919/203620286-bda2c9f0-0bfc-4ea3-aa41-c9b0291d0f54.png)
 
+
+### Pendências
+ - Front-end
+ - HATEOAS
+ - Autenticação e autorização
+
