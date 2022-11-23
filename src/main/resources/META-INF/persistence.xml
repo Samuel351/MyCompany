@@ -4,10 +4,10 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.project.enterprise.model.WorkerModel</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/company"/>
-      <property name="javax.persistence.jdbc.user" value="postgres"/>
-      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="123456"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/company?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.user" value="samuel"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
