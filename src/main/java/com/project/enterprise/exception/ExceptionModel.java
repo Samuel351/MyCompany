@@ -4,6 +4,8 @@
  */
 package com.project.enterprise.exception;
 
+import java.io.Serializable;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,10 +16,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExceptionModel {
+public class ExceptionModel implements Serializable{
     private final String message;
 
     public ExceptionModel(String message) {
         this.message = message;
-    } 
+    }
 }

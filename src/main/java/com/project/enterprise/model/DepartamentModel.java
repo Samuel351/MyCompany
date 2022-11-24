@@ -30,11 +30,10 @@ public class DepartamentModel extends RepresentationModel<DepartamentModel> impl
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
-    @NotBlank
+    @NotBlank(message = "Nome não pode ser vazio")
     private String nome;
     
-    @NotBlank
-    @Size(min = 2)
+    @NotBlank(message = "Sigla não pode ser vazio")
     private String sigla;
 
     public DepartamentModel() {

@@ -38,16 +38,16 @@ public class WorkerModel extends RepresentationModel<WorkerModel> implements Ser
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
-    @NotBlank
+    @NotBlank(message = "Nome não pode ser vazio")
     private String nome;
     
-    @NotBlank
+    @NotBlank(message = "Email não pode ser vazio")
     @Email
     private String email;
    
     private String foto;
     
-    @NotBlank
+    @NotBlank(message = "RG não pode ser vazio")
     private String RG;
     
     @ManyToOne

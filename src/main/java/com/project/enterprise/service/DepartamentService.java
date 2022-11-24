@@ -62,7 +62,7 @@ public class DepartamentService {
         }
         if(departamentRepository.existsBySigla(departamentModel.getSigla()) && !departamentModel.getSigla().equals(optionalDepartament.get().getSigla()))
         {
-            throw new ApiConflictException("Já existe um departamento com esta sigla");
+            throw new Error("Já existe um departamento com esta sigla");
         }
         departamentModel.setId(id);
         return departamentRepository.save(departamentModel);
