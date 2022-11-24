@@ -7,6 +7,7 @@ package com.project.enterprise.service;
 import com.project.enterprise.exception.ApiConflictException;
 import com.project.enterprise.exception.ApiNotFoundException;
 import com.project.enterprise.model.WorkerModel;
+import com.project.enterprise.repository.DepartamentRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -25,11 +26,15 @@ public class WorkerService {
     @Autowired
     WorkerRepository workerRepository;
     
+    @Autowired
+    DepartamentRepository departamentRepository;
+    
     public Optional <WorkerModel> findById(Long id){
-        if(!workerRepository.findById(id).isPresent()){
-            throw new ApiNotFoundException("Não existe trabalhador com ID inserido");
+        Optional <WorkerModel> optionalWorker = workerRepository.findById(id);
+        if(!optionalWorker.isPresent()){
+            throw new ApiNotFoundException("Não existe trabalhador com o ID: " + id);
         }
-        return workerRepository.findById(id);
+        return optionalWorker;
     }
     
     public List<WorkerModel> findAll(){
@@ -37,30 +42,41 @@ public class WorkerService {
     }
     
     public List<WorkerModel> findAllByDepartament(long id){
+        if(!departamentRepository.findById(id).isPresent()){
+            throw new ApiNotFoundException("Departamento informado não existe");
+        }
         return workerRepository.findAllByDepartament(id);
     }
     
     @Transactional
     public WorkerModel save(WorkerModel workerModel){
         if(workerRepository.existsByEmail(workerModel.getEmail())){
-            throw new ApiConflictException("Esse email já está cadastrado");
+            throw new ApiConflictException(workerModel.getEmail() + " já está cadastrado");
         }
         return workerRepository.save(workerModel);
     }
     
     @Transactional
-    public WorkerModel edit(WorkerModel workerModel){
-        Optional <WorkerModel> worker = workerRepository.findById(workerModel.getId());
-        if(workerRepository.existsByEmail(workerModel.getEmail()) && !worker.get().getEmail().equals(workerModel.getEmail())){
-            throw new ApiConflictException("Esse email já está cadastrado");
+    public WorkerModel edit(long id, WorkerModel workerModel){
+        Optional <WorkerModel> optionalWorker = workerRepository.findById(id);
+        
+        if(!optionalWorker.isPresent()){
+            throw new ApiNotFoundException("Não existe trabalhador com o ID: " + id);
         }
+        if(workerRepository.existsByEmail(workerModel.getEmail()) && !optionalWorker.get().getEmail().equals(workerModel.getEmail())){
+            throw new ApiConflictException(workerModel.getEmail() + " já está cadastrado");
+        }
+        if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent()){
+            throw new ApiNotFoundException("Departamento atribuído ao trabalhador não existe");
+        }
+        workerModel.setId(optionalWorker.get().getId());
         return workerRepository.save(workerModel);
     }
   
     @Transactional
     public void DeleteById(long id){
         if(!workerRepository.findById(id).isPresent()){
-            throw new ApiNotFoundException("Não existe departamento com o ID inserido");
+            throw new ApiNotFoundException("Não existe trabalhador com o ID: " + id);
         }
         workerRepository.deleteById(id);
     }

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,25 +45,36 @@ public class DepartamentController {
     
     @GetMapping
     public ResponseEntity<List<DepartamentModel>> getDepartaments(){
+        List<DepartamentModel> departaments = departamentService.findAll();
+        
+        for (DepartamentModel departament : departaments) {
+            Link selfLink = linkTo(DepartamentController.class).slash(departament.getId()).withSelfRel();
+            departament.add(selfLink);
+        }
+        
         return ResponseEntity.status(HttpStatus.OK).body(departamentService.findAll());
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<Object> getDepartament(@PathVariable(value = "id") long id){
-        return ResponseEntity.status(HttpStatus.OK).body(departamentService.findById(id));
+        Optional <DepartamentModel> optionalDepartament = departamentService.findById(id);
+        
+        Link delLink = linkTo(DepartamentController.class).slash(optionalDepartament.get().getId()).withRel("Delete").withType("DELETE");
+        Link editLink = linkTo(DepartamentController.class).slash(optionalDepartament.get().getId()).withRel("Edit").withType("PUT");
+        optionalDepartament.get().add(delLink);
+        optionalDepartament.get().add(editLink);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(optionalDepartament.get());
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateDepartament(@PathVariable(value = "id") long id, @RequestBody @Valid DepartamentModel departamentModel){
-        Optional<DepartamentModel> departamentModelOptional = departamentService.findById(id);
-        departamentModel.setId(departamentModelOptional.get().getId());
-        return ResponseEntity.status(HttpStatus.OK).body(departamentService.edit(departamentModel));
+        return ResponseEntity.status(HttpStatus.OK).body(departamentService.edit(id, departamentModel));
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteDepartament(@PathVariable(value = "id") long id){
-        Optional<DepartamentModel> departamentModelOptional = departamentService.findById(id);
-        departamentService.DeleteById(departamentModelOptional.get().getId());
+        departamentService.DeleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Departamento deletado!");
     }
 }

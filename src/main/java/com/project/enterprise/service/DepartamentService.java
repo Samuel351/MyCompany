@@ -26,10 +26,12 @@ public class DepartamentService {
     DepartamentRepository departamentRepository;
     
     public Optional <DepartamentModel> findById(Long id){
-    if(!departamentRepository.findById(id).isPresent()){
+    Optional <DepartamentModel> optionalDepartament = departamentRepository.findById(id);
+    if(!optionalDepartament.isPresent()){
         throw new ApiNotFoundException("Não existe departamento com o ID inserido");
     }
-        return departamentRepository.findById(id);
+        DepartamentModel departament = optionalDepartament.get();
+        return optionalDepartament;
     }
     
     public List<DepartamentModel> findAll(){
@@ -49,16 +51,20 @@ public class DepartamentService {
     }
     
     @Transactional
-    public DepartamentModel edit(DepartamentModel departamentModel){
-        Optional <DepartamentModel> departament = departamentRepository.findById(departamentModel.getId());
-        if(departamentRepository.existsByNome(departamentModel.getNome()) && !departamentModel.getNome().equals(departament.get().getNome()))
+    public DepartamentModel edit(long id, DepartamentModel departamentModel){
+        Optional <DepartamentModel> optionalDepartament = departamentRepository.findById(id);
+        if(!optionalDepartament.isPresent()){
+             throw new ApiNotFoundException("Não existe departamento com o ID inserido");
+        }
+        if(departamentRepository.existsByNome(departamentModel.getNome()) && !departamentModel.getNome().equals(optionalDepartament.get().getNome()))
         {
             throw new ApiConflictException("Já existe um departamento com este nome");
         }
-        if(departamentRepository.existsBySigla(departamentModel.getSigla()) && !departamentModel.getSigla().equals(departament.get().getSigla()))
+        if(departamentRepository.existsBySigla(departamentModel.getSigla()) && !departamentModel.getSigla().equals(optionalDepartament.get().getSigla()))
         {
             throw new ApiConflictException("Já existe um departamento com esta sigla");
         }
+        departamentModel.setId(id);
         return departamentRepository.save(departamentModel);
     }
     

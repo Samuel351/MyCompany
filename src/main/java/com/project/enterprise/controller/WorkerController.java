@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,12 +43,29 @@ public class WorkerController {
     
     @GetMapping
     public ResponseEntity<List<WorkerModel>> getWorkers(){
-        return ResponseEntity.status(HttpStatus.OK).body(workerService.findAll());
+        List<WorkerModel> workers = workerService.findAll();
+        
+        for(WorkerModel worker : workers){
+         Link selfLink = linkTo(WorkerController.class).slash(worker.getId()).withSelfRel();
+         Link departamentLink = linkTo(DepartamentController.class).slash(worker.getDepartament().getId()).withSelfRel();
+         
+         worker.add(selfLink);
+         worker.getDepartament().add(departamentLink);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(workers);
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<Object> getWorker(@PathVariable(value = "id") long id){
-        return ResponseEntity.status(HttpStatus.OK).body(workerService.findById(id));
+        Optional <WorkerModel> optionalWorker = workerService.findById(id);
+        
+        Link delLink = linkTo(DepartamentController.class).slash(optionalWorker.get().getId()).withRel("Delete").withType("DELETE");
+        Link editLink = linkTo(DepartamentController.class).slash(optionalWorker.get().getId()).withRel("Edit").withType("PUT");
+        optionalWorker.get().add(delLink);
+        optionalWorker.get().add(editLink);
+        
+        
+        return ResponseEntity.status(HttpStatus.OK).body(optionalWorker.get());
     }
     
     
@@ -57,16 +76,12 @@ public class WorkerController {
     
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateWorker(@PathVariable(value = "id") long id, @RequestBody @Valid WorkerModel workerModel){
-        
-        Optional<WorkerModel> workerModelOptional = workerService.findById(id);
-        workerModel.setId(workerModelOptional.get().getId());
-        return ResponseEntity.status(HttpStatus.OK).body(workerService.edit(workerModel));
+        return ResponseEntity.status(HttpStatus.OK).body(workerService.edit(id, workerModel));
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteWorker(@PathVariable(value = "id") long id){
-        Optional<WorkerModel> workerModelOptional = workerService.findById(id);
-        workerService.DeleteById(workerModelOptional.get().getId());
+        workerService.DeleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     

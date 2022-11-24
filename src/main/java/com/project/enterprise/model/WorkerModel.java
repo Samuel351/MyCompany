@@ -4,8 +4,8 @@
  */
 package com.project.enterprise.model;
 
+
 import java.io.Serializable;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.validation.annotation.Validated;
 
 /**
  *
@@ -29,7 +31,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @Entity
 @Table(name = "Worker")
-public class WorkerModel implements Serializable {
+@Validated
+public class WorkerModel extends RepresentationModel<WorkerModel> implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -47,7 +50,7 @@ public class WorkerModel implements Serializable {
     @NotBlank
     private String RG;
     
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DepartamentModel Departament;

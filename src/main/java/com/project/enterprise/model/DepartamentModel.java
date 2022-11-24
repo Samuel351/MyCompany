@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 /**
  *
@@ -23,7 +24,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "Departament")
-public class DepartamentModel implements Serializable {
+public class DepartamentModel extends RepresentationModel<DepartamentModel> implements Serializable {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
