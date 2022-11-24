@@ -15,8 +15,6 @@
 
 ### Pendências
  - Front-end
- - HATEOAS
  - Autenticação e autorização
- - Validação dos campos 
  
 
