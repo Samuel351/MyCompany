@@ -6,6 +6,7 @@ package com.project.enterprise.model;
 
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -27,15 +29,18 @@ import org.springframework.validation.annotation.Validated;
  * @author sscos
  */
 
-@Getter
-@Setter
+
 @Entity
 @Table(name = "Worker")
+@Getter
+@Setter
+@NoArgsConstructor
 @Validated
 public class WorkerModel extends RepresentationModel<WorkerModel> implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "worker_id")
     private long id;
     
     @NotBlank(message = "Nome não pode ser vazio")
@@ -44,7 +49,7 @@ public class WorkerModel extends RepresentationModel<WorkerModel> implements Ser
     @NotBlank(message = "Email não pode ser vazio")
     @Email
     private String email;
-   
+    
     private String foto;
     
     @NotBlank(message = "RG não pode ser vazio")
@@ -55,10 +60,7 @@ public class WorkerModel extends RepresentationModel<WorkerModel> implements Ser
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DepartamentModel Departament;
 
-    public WorkerModel() {
-    }
-
-    public WorkerModel(String nome, String email, String foto, String RG, DepartamentModel Departament) {
+    public WorkerModel(String nome, String email,String foto, String RG, DepartamentModel Departament) {
         this.nome = nome;
         this.email = email;
         this.foto = foto;
