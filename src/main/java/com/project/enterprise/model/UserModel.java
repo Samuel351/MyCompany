@@ -23,7 +23,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
 
 /**
  *
@@ -34,6 +33,7 @@ import org.springframework.validation.annotation.Validated;
 @Table(name = "User")
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserModel implements UserDetails, Serializable {
     
     @Id
@@ -43,6 +43,7 @@ public class UserModel implements UserDetails, Serializable {
     
     @NotBlank(message = "Email não pode ser vazio")
     @Email
+    @Column(unique = true)
     private String email;
     
     @NotBlank(message = "É necessário uma senha")
@@ -94,5 +95,7 @@ public class UserModel implements UserDetails, Serializable {
     public boolean isEnabled() {
         return true;
     }
+    
+    
     
 }

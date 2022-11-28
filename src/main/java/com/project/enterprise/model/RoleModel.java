@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -24,6 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "roles")
 public class RoleModel implements GrantedAuthority,Serializable {
@@ -41,4 +43,10 @@ public class RoleModel implements GrantedAuthority,Serializable {
     public String getAuthority() {
        return this.roleType.toString();
     }
+    
+    public RoleModel(RoleType roleType) {
+        this.roleType = roleType;
+    }
+    
+    
 }

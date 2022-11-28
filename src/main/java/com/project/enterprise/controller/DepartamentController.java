@@ -14,6 +14,7 @@ import org.springframework.hateoas.Link;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +39,13 @@ public class DepartamentController {
     @Autowired
     DepartamentService departamentService;
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Object> insertDepartament(@RequestBody @Valid DepartamentModel departamentModel){
         return ResponseEntity.status(HttpStatus.CREATED).body(departamentService.save(departamentModel));
     }
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
     public ResponseEntity<List<DepartamentModel>> getDepartaments(){
         List<DepartamentModel> departaments = departamentService.findAll();
@@ -55,6 +58,7 @@ public class DepartamentController {
         return ResponseEntity.status(HttpStatus.OK).body(departamentService.findAll());
     }
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getDepartament(@PathVariable(value = "id") long id){
         Optional <DepartamentModel> optionalDepartament = departamentService.findById(id);
@@ -67,11 +71,13 @@ public class DepartamentController {
         return ResponseEntity.status(HttpStatus.OK).body(optionalDepartament.get());
     }
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateDepartament(@PathVariable(value = "id") long id, @RequestBody @Valid DepartamentModel departamentModel){
         return ResponseEntity.status(HttpStatus.OK).body(departamentService.edit(id, departamentModel));
     }
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteDepartament(@PathVariable(value = "id") long id){
         departamentService.DeleteById(id);

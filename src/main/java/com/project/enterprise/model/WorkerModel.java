@@ -5,6 +5,7 @@
 package com.project.enterprise.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +51,9 @@ public class WorkerModel extends RepresentationModel<WorkerModel> implements Ser
     @Email
     private String email;
     
+    @NotBlank(message = "Senha não pode ser vazia")
+    private String senha;
+    
     private String foto;
     
     @NotBlank(message = "RG não pode ser vazio")
@@ -60,9 +64,10 @@ public class WorkerModel extends RepresentationModel<WorkerModel> implements Ser
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DepartamentModel Departament;
 
-    public WorkerModel(String nome, String email,String foto, String RG, DepartamentModel Departament) {
+    public WorkerModel(String nome, String email, String senha,String foto, String RG, DepartamentModel Departament) {
         this.nome = nome;
         this.email = email;
+        this.senha = senha;
         this.foto = foto;
         this.RG = RG;
         this.Departament = Departament;

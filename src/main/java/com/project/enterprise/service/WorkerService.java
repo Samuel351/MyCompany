@@ -6,14 +6,19 @@ package com.project.enterprise.service;
 
 import com.project.enterprise.exception.ApiConflictException;
 import com.project.enterprise.exception.ApiNotFoundException;
+import com.project.enterprise.model.RoleModel;
+import com.project.enterprise.model.UserModel;
 import com.project.enterprise.model.WorkerModel;
 import com.project.enterprise.repository.DepartamentRepository;
+import com.project.enterprise.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.enterprise.repository.WorkerRepository;
+import java.util.ArrayList;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -25,6 +30,12 @@ public class WorkerService {
     
     @Autowired
     WorkerRepository workerRepository;
+    
+    @Autowired
+    UserRepository userRepository;
+    
+    @Autowired
+    RoleService roleService;
     
     @Autowired
     DepartamentRepository departamentRepository;
@@ -53,6 +64,14 @@ public class WorkerService {
         if(workerRepository.existsByEmail(workerModel.getEmail())){
             throw new ApiConflictException(workerModel.getEmail() + " já está cadastrado");
         }
+        if(workerRepository.existsByRG(workerModel.getRG())){
+            throw new ApiConflictException(workerModel.getRG() + " já está cadastrado");
+        }
+        UserModel user = new UserModel(workerModel.getEmail(), new BCryptPasswordEncoder().encode(workerModel.getSenha()));
+        List<RoleModel> list = new ArrayList();
+        list.add(roleService.findById(2).get());
+        user.setRoles(list);
+        userRepository.save(user);
         return workerRepository.save(workerModel);
     }
     
@@ -69,15 +88,19 @@ public class WorkerService {
         if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent()){
             throw new ApiNotFoundException("Departamento atribuído ao trabalhador não existe");
         }
+        
         workerModel.setId(optionalWorker.get().getId());
         return workerRepository.save(workerModel);
     }
   
     @Transactional
     public void DeleteById(long id){
-        if(!workerRepository.findById(id).isPresent()){
+        Optional <WorkerModel> worker = workerRepository.findById(id);
+        if(!worker.isPresent()){
             throw new ApiNotFoundException("Não existe trabalhador com o ID: " + id);
         }
+        
         workerRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 }

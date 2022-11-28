@@ -4,6 +4,7 @@
  */
 package com.project.enterprise.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +42,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionModel, HttpStatus.CONFLICT);
     }
 
-    // Mensagem de campos de validação inválido
+    // Mensagem de campos de validação
     @Override
      protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                 HttpHeaders headers, HttpStatus status,
@@ -55,7 +56,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             exceptionList.add(exceptionModel);
          }
         return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
-  
-  }
-
+    }
+     
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    public ResponseEntity<Object> ApiHandlerException(AccessDeniedException e) {
+        ExceptionModel exceptionModel = new ExceptionModel(
+                e.getMessage()
+        );
+        return new ResponseEntity<>(exceptionModel, HttpStatus.NOT_FOUND);
+    }    
 }

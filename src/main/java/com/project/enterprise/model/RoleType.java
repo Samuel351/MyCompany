@@ -4,10 +4,18 @@
  */
 package com.project.enterprise.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+
+
 /**
  *
  * @author sscos
  */
+@Getter
+@NoArgsConstructor
 public enum RoleType {
     ROLE_ADMIN,
     ROLE_USER;

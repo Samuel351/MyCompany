@@ -4,8 +4,8 @@
  */
 package com.project.enterprise.repository;
 
-import com.project.enterprise.model.UserModel;
-import java.util.Optional;
+import com.project.enterprise.model.RoleModel;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +14,5 @@ import org.springframework.stereotype.Repository;
  * @author sscos
  */
 @Repository
-public interface UserRepository extends CrudRepository<UserModel, Long> {
-   
-    Optional <UserModel> findByEmail (final String nome);
-    UserModel deleteByEmail(final String email);
+public interface RoleRepository extends CrudRepository<RoleModel, Long> {
 }

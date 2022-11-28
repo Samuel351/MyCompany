@@ -14,6 +14,7 @@ import org.springframework.hateoas.Link;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,7 @@ public class WorkerController {
     @Autowired
     WorkerService workerService;
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
         public ResponseEntity<Object> insertWorker(@RequestBody @Valid WorkerModel workerModel){
             return ResponseEntity.status(HttpStatus.CREATED).body(workerService.save(workerModel));
@@ -55,6 +57,7 @@ public class WorkerController {
         return ResponseEntity.status(HttpStatus.OK).body(workers);
     }
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getWorker(@PathVariable(value = "id") long id){
         Optional <WorkerModel> optionalWorker = workerService.findById(id);
@@ -69,16 +72,19 @@ public class WorkerController {
     }
     
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/departament/{id}")
     public ResponseEntity<List<WorkerModel>> getWorkersByDepartament(@PathVariable(value = "id") long id){
         return ResponseEntity.status(HttpStatus.OK).body(workerService.findAllByDepartament(id));
     } 
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateWorker(@PathVariable(value = "id") long id, @RequestBody @Valid WorkerModel workerModel){
         return ResponseEntity.status(HttpStatus.OK).body(workerService.edit(id, workerModel));
     }
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteWorker(@PathVariable(value = "id") long id){
         workerService.DeleteById(id);
