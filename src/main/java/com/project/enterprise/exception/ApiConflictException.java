@@ -10,8 +10,11 @@ package com.project.enterprise.exception;
  */
 public class ApiConflictException extends RuntimeException {
     
+    private final String message;
+    
      public ApiConflictException(String message){
         super(message);
+        this.message = message;
     }
     
 }

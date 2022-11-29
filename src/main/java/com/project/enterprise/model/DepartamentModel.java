@@ -4,16 +4,21 @@
  */
 package com.project.enterprise.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.project.enterprise.Dto.WorkerDto;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
 
 /**
  *
@@ -23,7 +28,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Setter
 @Entity
 @Table(name = "Departament")
-public class DepartamentModel extends RepresentationModel<DepartamentModel> implements Serializable {
+public class DepartamentModel implements Serializable {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -34,6 +39,10 @@ public class DepartamentModel extends RepresentationModel<DepartamentModel> impl
     
     @NotBlank(message = "Sigla não pode ser vazio")
     private String sigla;
+    
+    @Transient
+    @JsonInclude(Include.NON_EMPTY)
+    private List<WorkerDto> workers;
 
     public DepartamentModel() {
     }

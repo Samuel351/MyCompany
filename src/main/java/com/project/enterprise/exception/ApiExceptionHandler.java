@@ -58,11 +58,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
     }
      
-    @ExceptionHandler(value = {AccessDeniedException.class})
-    public ResponseEntity<Object> ApiHandlerException(AccessDeniedException e) {
-        ExceptionModel exceptionModel = new ExceptionModel(
-                e.getMessage()
-        );
-        return new ResponseEntity<>(exceptionModel, HttpStatus.NOT_FOUND);
-    }    
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(Exception e, WebRequest request) {
+    return new ResponseEntity<>("Acesso negado!", HttpStatus.FORBIDDEN);
+} 
 }

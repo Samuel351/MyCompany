@@ -7,11 +7,8 @@ package com.project.enterprise.controller;
 import com.project.enterprise.model.WorkerModel;
 import com.project.enterprise.service.WorkerService;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,54 +34,30 @@ public class WorkerController {
     @Autowired
     WorkerService workerService;
     
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
         public ResponseEntity<Object> insertWorker(@RequestBody @Valid WorkerModel workerModel){
             return ResponseEntity.status(HttpStatus.CREATED).body(workerService.save(workerModel));
     }
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
     public ResponseEntity<List<WorkerModel>> getWorkers(){
-        List<WorkerModel> workers = workerService.findAll();
-        
-        for(WorkerModel worker : workers){
-         Link selfLink = linkTo(WorkerController.class).slash(worker.getId()).withSelfRel();
-         Link departamentLink = linkTo(DepartamentController.class).slash(worker.getDepartament().getId()).withSelfRel();
-         
-         worker.add(selfLink);
-         worker.getDepartament().add(departamentLink);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(workers);
+        return ResponseEntity.status(HttpStatus.OK).body(workerService.findAll());
     }
     
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getWorker(@PathVariable(value = "id") long id){
-        Optional <WorkerModel> optionalWorker = workerService.findById(id);
-        
-        Link delLink = linkTo(DepartamentController.class).slash(optionalWorker.get().getId()).withRel("Delete").withType("DELETE");
-        Link editLink = linkTo(DepartamentController.class).slash(optionalWorker.get().getId()).withRel("Edit").withType("PUT");
-        optionalWorker.get().add(delLink);
-        optionalWorker.get().add(editLink);
-        
-        
-        return ResponseEntity.status(HttpStatus.OK).body(optionalWorker.get());
+    public ResponseEntity<Object> getWorker(@PathVariable(value = "id") long id){  
+        return ResponseEntity.status(HttpStatus.OK).body(workerService.findById(id));
     }
     
-    
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    @GetMapping("/departament/{id}")
-    public ResponseEntity<List<WorkerModel>> getWorkersByDepartament(@PathVariable(value = "id") long id){
-        return ResponseEntity.status(HttpStatus.OK).body(workerService.findAllByDepartament(id));
-    } 
-    
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateWorker(@PathVariable(value = "id") long id, @RequestBody @Valid WorkerModel workerModel){
         return ResponseEntity.status(HttpStatus.OK).body(workerService.edit(id, workerModel));
     }
     
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteWorker(@PathVariable(value = "id") long id){
         workerService.DeleteById(id);

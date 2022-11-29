@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -37,7 +36,7 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @NoArgsConstructor
 @Validated
-public class WorkerModel extends RepresentationModel<WorkerModel> implements Serializable {
+public class WorkerModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

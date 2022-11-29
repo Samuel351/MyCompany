@@ -4,15 +4,19 @@
  */
 package com.project.enterprise.service;
 
+import com.project.enterprise.Dto.WorkerDto;
 import com.project.enterprise.exception.ApiConflictException;
 import com.project.enterprise.exception.ApiNotFoundException;
 import com.project.enterprise.model.DepartamentModel;
+import com.project.enterprise.model.WorkerModel;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.enterprise.repository.DepartamentRepository;
+import com.project.enterprise.repository.WorkerRepository;
+import java.util.ArrayList;
 
 /**
  *
@@ -25,12 +29,20 @@ public class DepartamentService {
     @Autowired
     DepartamentRepository departamentRepository;
     
+    @Autowired
+    WorkerRepository workerRepository;
+    
     public Optional <DepartamentModel> findById(Long id){
     Optional <DepartamentModel> optionalDepartament = departamentRepository.findById(id);
     if(!optionalDepartament.isPresent()){
         throw new ApiNotFoundException("Não existe departamento com o ID inserido");
     }
-        DepartamentModel departament = optionalDepartament.get();
+        List<WorkerDto> workerDtos = new ArrayList();
+        List<WorkerModel> workers = workerRepository.findAllByDepartament(id);
+        for(WorkerModel worker : workers){
+            workerDtos.add(new WorkerDto(worker.getNome(), worker.getEmail()));
+        }
+        optionalDepartament.get().setWorkers(workerDtos);
         return optionalDepartament;
     }
     
@@ -56,6 +68,8 @@ public class DepartamentService {
         if(!optionalDepartament.isPresent()){
              throw new ApiNotFoundException("Não existe departamento com o ID inserido");
         }
+        
+        //Se o nome inserido for igual a um existente no DB e se for diferente do nome atual, lançar uma exceção
         if(departamentRepository.existsByNome(departamentModel.getNome()) && !departamentModel.getNome().equals(optionalDepartament.get().getNome()))
         {
             throw new ApiConflictException("Já existe um departamento com este nome");

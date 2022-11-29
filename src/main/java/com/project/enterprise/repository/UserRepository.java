@@ -17,5 +17,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends CrudRepository<UserModel, Long> {
    
     Optional <UserModel> findByEmail (final String nome);
-    UserModel deleteByEmail(final String email);
+    
+    Boolean existsByEmail (final String email);
+    Boolean existsBySenha (final String senha);
 }

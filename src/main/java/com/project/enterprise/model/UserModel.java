@@ -21,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -35,6 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Setter
 @NoArgsConstructor
 public class UserModel implements UserDetails, Serializable {
+    
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -95,7 +97,10 @@ public class UserModel implements UserDetails, Serializable {
     public boolean isEnabled() {
         return true;
     }
-    
-    
-    
+
+    public UserModel(String email, String senha, List<RoleModel> roles) {
+        this.email = email;
+        this.senha = senha;
+        this.roles = roles;
+    }
 }

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.enterprise.repository.WorkerRepository;
 import java.util.ArrayList;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -67,8 +69,13 @@ public class WorkerService {
         if(workerRepository.existsByRG(workerModel.getRG())){
             throw new ApiConflictException(workerModel.getRG() + " já está cadastrado");
         }
+        if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent())
+        {
+            throw new ApiConflictException("O departamento que você está tentando atribuir a um trabalhador não existe");
+        }
+        
         UserModel user = new UserModel(workerModel.getEmail(), new BCryptPasswordEncoder().encode(workerModel.getSenha()));
-        List<RoleModel> list = new ArrayList();
+        List<RoleModel> list = new ArrayList<>();
         list.add(roleService.findById(2).get());
         user.setRoles(list);
         userRepository.save(user);

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService{
+    // Autentica usuário
     
     @Autowired
     UserRepository userRepository;

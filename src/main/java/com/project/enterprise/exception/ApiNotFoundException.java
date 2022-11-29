@@ -10,7 +10,10 @@ package com.project.enterprise.exception;
  */
 public class ApiNotFoundException extends RuntimeException {
     
-     public ApiNotFoundException(String message){
+    private final String message;
+    
+    public ApiNotFoundException(String message){
         super(message);
+        this.message = message;
     }
 }
