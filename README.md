@@ -22,6 +22,5 @@
 
 ### Pendências
  - Front-end
- - Implementar JWT
  
 
