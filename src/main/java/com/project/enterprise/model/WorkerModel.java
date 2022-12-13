@@ -13,10 +13,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,31 +47,29 @@ public class WorkerModel implements Serializable {
     @Column(name = "worker_id")
     private long id;
     
-    @NotBlank(message = "Nome não pode ser vazio")
-    private String nome;
+    @NotBlank(message = "Nome cannot be empty")
+    private String name;
     
-    @NotBlank(message = "Email não pode ser vazio")
-    @Email
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email pattern invalid")
     private String email;
     
-    @NotBlank(message = "Senha não pode ser vazia")
-    private String senha;
-    
-    private String foto;
-    
-    @NotBlank(message = "RG não pode ser vazio")
-    private String RG;
+    @Lob
+    private byte[] photo;
+
+    @NotNull(message = "RG cannot be empty")
+    @Min(9)
+    private int RG;
     
     @ManyToOne
     @JoinColumn
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DepartamentModel Departament;
-
-    public WorkerModel(String nome, String email, String senha,String foto, String RG, DepartamentModel Departament) {
-        this.nome = nome;
+    
+    public WorkerModel(String name, String email, byte[] photo, int RG, DepartamentModel Departament) {
+        this.name = name;
         this.email = email;
-        this.senha = senha;
-        this.foto = foto;
+        this.photo = photo;
         this.RG = RG;
         this.Departament = Departament;
     }

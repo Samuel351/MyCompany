@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/departament")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 @Valid
 public class DepartamentController {
-    // Optei por deixa sem HATEOAS por enquanto
+
     @Autowired
     DepartamentService departamentService;
     
@@ -66,7 +66,6 @@ public class DepartamentController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteDepartament(@PathVariable(value = "id") long id){
-        departamentService.DeleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Departamento deletado!");
+        return ResponseEntity.status(HttpStatus.OK).body(departamentService.DeleteById(id));
     }
 }

@@ -34,10 +34,9 @@ public class DepartamentModel implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
-    @NotBlank(message = "Nome não pode ser vazio")
-    private String nome;
+    @NotBlank(message = "Name cannot be empty")
+    private String name;
     
-    @NotBlank(message = "Sigla não pode ser vazio")
     private String sigla;
     
     @Transient
@@ -47,9 +46,8 @@ public class DepartamentModel implements Serializable {
     public DepartamentModel() {
     }
    
-     public DepartamentModel(String nome, String sigla) {
-        this.nome = nome;
-        this.sigla = sigla;
+     public DepartamentModel(String name) {
+        this.name = name;
     }
 
     public DepartamentModel(long id) {

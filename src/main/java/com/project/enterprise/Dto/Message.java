@@ -8,20 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author sscos
  */
-@Getter
+
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@Component
-public class WorkerDto {
+@NoArgsConstructor
+public class Message {
     
-    private String name;
-    private String email;
+    private String message;
     
 }

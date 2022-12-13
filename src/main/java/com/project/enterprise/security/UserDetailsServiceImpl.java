@@ -4,6 +4,7 @@
  */
 package com.project.enterprise.security;
 
+
 import com.project.enterprise.model.UserModel;
 import com.project.enterprise.repository.UserRepository;
 import javax.transaction.Transactional;
@@ -29,9 +30,9 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário not found"));
         
-        return new User(user.getEmail(), user.getSenha(), true, true, true, true, user.getAuthorities());
+        return new User(user.getEmail(), user.getPassword(), true, true, true, true, user.getAuthorities());
     }
     
     

@@ -7,6 +7,7 @@ package com.project.enterprise.exception;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -25,21 +27,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     // id que não existe 
-    @ExceptionHandler(value = {ApiNotFoundException.class})
-    public ResponseEntity<Object> ApiHandlerException(ApiNotFoundException e) {
-        ExceptionModel exceptionModel = new ExceptionModel(
-                e.getMessage()
-        );
-        return new ResponseEntity<>(exceptionModel, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> ApiHandlerException(NoSuchElementException e) {
+        return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
     }
 
     // Conflito de nome(departamento ou funcionário), email ou sigla
-    @ExceptionHandler(value = {ApiConflictException.class})
-    public ResponseEntity<Object> ApiHandlerException(ApiConflictException e) {
-        ExceptionModel exceptionModel = new ExceptionModel(
-                e.getMessage()
-        );
-        return new ResponseEntity<>(exceptionModel, HttpStatus.CONFLICT);
+    @ExceptionHandler(value = {HttpClientErrorException.Conflict.class})
+    public ResponseEntity<Object> ApiHandlerException(HttpClientErrorException.Conflict e) {
+        return new ResponseEntity<>(e, HttpStatus.CONFLICT);
     }
 
     // Mensagem de campos de validação
@@ -55,11 +51,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             ExceptionModel exceptionModel = new ExceptionModel(error.getDefaultMessage());
             exceptionList.add(exceptionModel);
          }
-        return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionList, HttpStatus.NOT_ACCEPTABLE);
     }
      
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(Exception e, WebRequest request) {
-    return new ResponseEntity<>("Acesso negado!", HttpStatus.FORBIDDEN);
-} 
+       @ExceptionHandler(AccessDeniedException.class)
+        public final ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        ExceptionModel exceptionModel = new ExceptionModel(
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(exceptionModel, HttpStatus.FORBIDDEN);
+    }
 }

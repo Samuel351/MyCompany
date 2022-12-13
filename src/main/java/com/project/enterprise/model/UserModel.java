@@ -21,7 +21,6 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,32 +28,25 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * @author sscos
  */
-
 @Entity
-@Table(name = "User")
+@Table(name = "UserModel")
 @Getter
 @Setter
 @NoArgsConstructor
 public class UserModel implements UserDetails, Serializable {
-    
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long userId;
     
-    @NotBlank(message = "Email não pode ser vazio")
+    @NotBlank(message = "Email cannot be empty")
     @Email
     @Column(unique = true)
     private String email;
     
-    @NotBlank(message = "É necessário uma senha")
-    private String senha;
-    
-    public UserModel(String email, String senha){
-        this.email = email;
-        this.senha = senha;
-    }
+    @NotBlank(message = "Password cannot be empty")
+    private String password;
     
     @ManyToMany
     @JoinTable(name = "user_roles", 
@@ -65,12 +57,12 @@ public class UserModel implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-         return this.roles;
+        return this.roles;
     }
 
     @Override
     public String getPassword() {
-        return this.senha;
+        return this.password;
     }
 
     @Override
@@ -97,10 +89,18 @@ public class UserModel implements UserDetails, Serializable {
     public boolean isEnabled() {
         return true;
     }
+    
+    public UserModel(long userid, String email, String senha, List<RoleModel> roles) {
+        this.userId = userid;
+        this.email = email;
+        this.password = senha;
+        this.roles = roles;
+    }
 
     public UserModel(String email, String senha, List<RoleModel> roles) {
         this.email = email;
-        this.senha = senha;
+        this.password = senha;
         this.roles = roles;
     }
+    
 }

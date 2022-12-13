@@ -6,6 +6,7 @@ package com.project.enterprise.service;
 
 import com.project.enterprise.model.RoleType;
 import com.project.enterprise.model.DepartamentModel;
+import com.project.enterprise.model.ImageModel;
 import com.project.enterprise.model.RoleModel;
 import com.project.enterprise.model.UserModel;
 import com.project.enterprise.model.WorkerModel;
@@ -37,7 +38,7 @@ public class SeedingService implements CommandLineRunner {
    
     @Autowired
     RoleRepository roleRepository;
-
+    
     // Populando base de dados
     @Override
     public void run(String... args) throws Exception {
@@ -50,21 +51,28 @@ public class SeedingService implements CommandLineRunner {
         List<RoleModel> list = new ArrayList();
         list.add(role_admin);
         
-        UserModel user = new UserModel("admin@gmail.com", new BCryptPasswordEncoder().encode("admin"));
-        user.setRoles(list);
+        List<RoleModel> list2 = new ArrayList();
+        list.add(role_user);
+        
+        UserModel admin = new UserModel("admin@gmail.com", new BCryptPasswordEncoder().encode("admin"), list);
+        UserModel ceo = new UserModel("ceo@gmail.com", new BCryptPasswordEncoder().encode("ceo"), list);
+        UserModel user = new UserModel("user@gmail.com", new BCryptPasswordEncoder().encode("user"), list2);
+        userRepository.save(admin);
+        userRepository.save(ceo);
         userRepository.save(user);
         
-        departamentService.save(new DepartamentModel("Vendas", "VEN"));
-        departamentService.save(new DepartamentModel("Marketing", "MAR"));
-        
-        workerService.save(new WorkerModel("Jonas", "jonas@gmail.com","2346","fotos", "26345436", new DepartamentModel(1)));
-        workerService.save(new WorkerModel("James","james@gmail.com","37rwg4","fotos", "23424235", new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com","26erg23r","fotos", "32345", new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,"ewf2423","fotos", "2354", new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Emily", "emily@gmail.com","1343fsdf","fotos", "124", new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,"123421e13556","fotos", "2345", new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carol", "carol@gmail.com","35ef24","fotos", "14325", new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com","f53625t","fotos", "25346435", new DepartamentModel(2)));
+        departamentService.save(new DepartamentModel("Vendas"));
+        departamentService.save(new DepartamentModel("Marketing"));
+        departamentService.save(new DepartamentModel("Desenvolvimento"));
+               
+        workerService.save(new WorkerModel("Jonas", "jonas@gmail.com",null, 263454369, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("James","james@gmail.com",null, 451254769, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com",null, 194344961, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,null, 452344966, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Emily", "emily@gmail.com",null, 122344564, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,null, 852399567, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carol", "carol@gmail.com",null, 454323159, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com",null, 352352367, new DepartamentModel(2)));
    
     }
     

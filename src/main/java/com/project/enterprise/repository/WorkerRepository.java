@@ -20,7 +20,7 @@ public interface WorkerRepository extends CrudRepository<WorkerModel, Long> {
     
     boolean existsByEmail(final String email);
     
-    boolean existsByRG(final String rg);
+    boolean existsByRG(final int rg);
     
     @Query(
     value = "SELECT * FROM WORKER u WHERE u.departament_id = ?", 

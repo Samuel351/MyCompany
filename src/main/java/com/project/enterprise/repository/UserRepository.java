@@ -4,6 +4,7 @@
  */
 package com.project.enterprise.repository;
 
+
 import com.project.enterprise.model.UserModel;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
@@ -19,5 +20,4 @@ public interface UserRepository extends CrudRepository<UserModel, Long> {
     Optional <UserModel> findByEmail (final String nome);
     
     Boolean existsByEmail (final String email);
-    Boolean existsBySenha (final String senha);
 }
