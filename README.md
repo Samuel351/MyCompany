@@ -12,9 +12,15 @@
 ### Listagem de funcionários
 ![image](https://user-images.githubusercontent.com/72561919/203620286-bda2c9f0-0bfc-4ea3-aa41-c9b0291d0f54.png)
 
+### Autenticação
+![image](https://user-images.githubusercontent.com/72561919/204602206-890c0202-f4b1-4d6e-9f78-db07188bde5b.png)
+
+### Autorização
+![image](https://user-images.githubusercontent.com/72561919/204602320-f150ad18-5c51-4912-877d-da77429d4aeb.png)
+
+
 
 ### Pendências
  - Front-end
- - Autenticação e autorização
  
 
