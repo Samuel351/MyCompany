@@ -4,7 +4,7 @@
  */
 package com.project.enterprise.controller;
 
-import com.project.enterprise.model.ImageModel;
+import com.project.enterprise.model.ImageDBModel;
 import com.project.enterprise.service.ImageService;
 import com.project.enterprise.service.WorkerService;
 import java.io.IOException;
@@ -37,37 +37,36 @@ public class ImageController {
     @Autowired
     WorkerService workerService;
     
-    /*@PostMapping
-    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        
-        ImageModel image = imageService.store(file);
-        
-      return ResponseEntity.status(HttpStatus.OK)
-              .body(image);
-    }*/
-    
-    @GetMapping
-    public ResponseEntity<Object> getFile(){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(imageService.getAllFiles());
+    // Salvar imagens no banco de dados
+    @PostMapping
+    public ResponseEntity<?> uploadImageToDatabase(@RequestParam("file")MultipartFile file) throws IOException{
+        return ResponseEntity.status(HttpStatus.OK).body(imageService.UploadToDatabase(file));
     }
     
-    
-    @PostMapping
-    public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("file")MultipartFile file) throws IOException {
-            String uploadImage = imageService.uploadImageToFileSystem(file);
+    @GetMapping("/{name}")
+        public ResponseEntity<?> downloadImageFromDatabase(@PathVariable(value = "name") String name) throws IOException {
+            ImageDBModel imageData = imageService.downloadImageFromDatabase(name);
             return ResponseEntity.status(HttpStatus.OK)
-                            .body(uploadImage);
+                            .contentType(MediaType.valueOf(imageData.getType()))
+                            .body(imageData.getData());
+    }
+   
+    // Salvar imagens no sistema de arquivos
+    @PostMapping("/file")
+    public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("file")MultipartFile file) throws IOException {
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(imageService.uploadImageToFileSystem(file));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> downloadImageFromFileSystem(@PathVariable(value = "id") long id) throws IOException {
-            byte[] imageData=imageService.downloadImageFromFileSystem(id);
+    @GetMapping("/file/{name}")
+    public ResponseEntity<?> downloadImageFromFileSystem(@PathVariable(value = "name") String name) throws IOException {
+            byte[] imageData=imageService.downloadImageFromFileSystem(name);
             return ResponseEntity.status(HttpStatus.OK)
                             .contentType(MediaType.valueOf("image/png"))
                             .body(imageData);
 
     }
+
   }
     
 

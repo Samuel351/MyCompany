@@ -10,6 +10,7 @@ import com.project.enterprise.model.ImageModel;
 import com.project.enterprise.model.RoleModel;
 import com.project.enterprise.model.UserModel;
 import com.project.enterprise.model.WorkerModel;
+import com.project.enterprise.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,9 @@ public class SeedingService implements CommandLineRunner {
     @Autowired
     RoleRepository roleRepository;
     
+    @Autowired
+    ImageRepository imageRepository;
+    
     // Populando base de dados
     @Override
     public void run(String... args) throws Exception {
@@ -64,16 +68,23 @@ public class SeedingService implements CommandLineRunner {
         departamentService.save(new DepartamentModel("Vendas"));
         departamentService.save(new DepartamentModel("Marketing"));
         departamentService.save(new DepartamentModel("Desenvolvimento"));
+        
+        imageRepository.save(new ImageModel("image.png"));
                
-        workerService.save(new WorkerModel("Jonas", "jonas@gmail.com",null, 263454369, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("James","james@gmail.com",null, 451254769, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com",null, 194344961, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,null, 452344966, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Emily", "emily@gmail.com",null, 122344564, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,null, 852399567, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carol", "carol@gmail.com",null, 454323159, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com",null, 352352367, new DepartamentModel(2)));
-   
+        workerService.save(new WorkerModel("Jonas", "jonas@gmail.com",new ImageModel(1), 263454369, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("James","james@gmail.com",new ImageModel(1), 451254769, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com",new ImageModel(1), 194344961, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,new ImageModel(1), 452344966, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Emily", "emily@gmail.com",new ImageModel(1), 122344564, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,new ImageModel(1), 852399567, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carol", "carol@gmail.com",new ImageModel(1), 454323159, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com",new ImageModel(1), 352352367, new DepartamentModel(2)));
+        
+        /* Imagem path 
+        "name": "image.png",
+        "type": "image/png",
+        "path": "C:/front/frontend/fotos/image.png"
+        */
     }
     
 }

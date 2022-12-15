@@ -4,8 +4,6 @@
  */
 package com.project.enterprise.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,11 +23,10 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "Photos")
-public class ImageModel implements Serializable {
-    
+@Table(name = "Photos_db")
+public class ImageDBModel {
+      
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
     private String name;
@@ -37,21 +34,17 @@ public class ImageModel implements Serializable {
 
     private String type;
 
-
-    private String path;
+    @Lob
+    private byte[] data;
     
-    public ImageModel(long id){
+    public ImageDBModel(long id){
         this.id = id;
     }
     
-    public ImageModel(String name){
-        this.name = name;
-    }
-    
-    public ImageModel(String name, String type, String path){
+    public ImageDBModel(String name, String type, byte[] data){
         this.name = name;
         this.type = type;
-        this.path = path;
+        this.data = data;
     }
     
 }

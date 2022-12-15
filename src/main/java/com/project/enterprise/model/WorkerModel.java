@@ -5,7 +5,6 @@
 package com.project.enterprise.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,8 +53,9 @@ public class WorkerModel implements Serializable {
     @Email(message = "Email pattern invalid")
     private String email;
     
-    @Lob
-    private byte[] photo;
+    @JoinColumn
+    @OneToOne
+    private ImageModel photo;
 
     @NotNull(message = "RG cannot be empty")
     @Min(9)
@@ -66,7 +66,7 @@ public class WorkerModel implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DepartamentModel Departament;
     
-    public WorkerModel(String name, String email, byte[] photo, int RG, DepartamentModel Departament) {
+    public WorkerModel(String name, String email, ImageModel photo, int RG, DepartamentModel Departament) {
         this.name = name;
         this.email = email;
         this.photo = photo;

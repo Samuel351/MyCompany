@@ -4,6 +4,7 @@
  */
 package com.project.enterprise.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.enterprise.model.WorkerModel;
 import com.project.enterprise.service.ImageService;
 import com.project.enterprise.service.WorkerService;
@@ -24,7 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -41,9 +44,17 @@ public class WorkerController {
     @Autowired
     ImageService imageService;
     
+    /*
     @PostMapping
         public ResponseEntity<Object> insertWorker(@RequestBody @Valid WorkerModel workerModel) throws IOException{
             return ResponseEntity.status(HttpStatus.CREATED).body(workerService.save(workerModel));
+    }*/
+    
+     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+        public ResponseEntity<Object> insertWorker(@RequestPart("worker") String worker, @RequestPart(value="file" ,required = false) MultipartFile file) throws IOException{
+            ObjectMapper map = new ObjectMapper();
+            WorkerModel workerModel = map.readValue(worker, WorkerModel.class);
+            return ResponseEntity.status(HttpStatus.CREATED).body(workerService.saveWorkerAndPhoto(workerModel, file));
     }
     
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")

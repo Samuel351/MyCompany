@@ -4,14 +4,15 @@
  */
 package com.project.enterprise.service;
 
+import com.project.enterprise.Dto.Message;
+import com.project.enterprise.model.ImageDBModel;
 import com.project.enterprise.model.ImageModel;
+import com.project.enterprise.repository.ImageDBRepository;
 import com.project.enterprise.repository.ImageRepository;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,24 +28,34 @@ public class ImageService {
     
     @Autowired
     ImageRepository imageRepository;
+    
+    @Autowired
+    ImageDBRepository imageDBRepository;
           
     // Salvar imagem no banco de dados
-    @Transactional
-    public ImageModel save(ImageModel image) throws IOException {
-        return imageRepository.save(image);
+    public Message UploadToDatabase(MultipartFile file) throws IOException {
+        ImageDBModel imageDB = imageDBRepository.save(new ImageDBModel(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
+        return new Message("File upload: " + imageDB.getName());
     }
     
-    public ImageModel findByName(String nome) {
-      return imageRepository.findByName(nome).get();
+    public ImageDBModel downloadImageFromDatabase(String name){
+        Optional<ImageDBModel> image = imageDBRepository.findByName(name);
+        if(image.isPresent()){
+            return image.get();
+        }
+        
+        return null;
     }
-
-      public List<ImageModel> getAllFiles() {
-        return (List<ImageModel>) imageRepository.findAll();
+    
+    public void deleteImageFromDatabase(long id){
+         if(imageDBRepository.findById(id).isPresent()){
+             imageDBRepository.deleteById(id);
+         }
     }
      
      
     // Salvar imagem nas pastas do computador
-    public String uploadImageToFileSystem(MultipartFile file) throws IOException {
+    public ImageModel uploadImageToFileSystem(MultipartFile file) throws IOException {
     String filePath=PATH+file.getOriginalFilename();
 
         ImageModel image=imageRepository.save(new ImageModel(file.getOriginalFilename(), file.getContentType(), filePath));
@@ -52,17 +63,26 @@ public class ImageService {
         file.transferTo(new File(filePath));
 
         if (image != null) {
-            return "file uploaded successfully : " + filePath;
+            return image;
         }
         return null;
     }
 
-    public byte[] downloadImageFromFileSystem(long id) throws IOException {
-        Optional<ImageModel> image = imageRepository.findById(id);
+    public byte[] downloadImageFromFileSystem(String name) throws IOException {
+        Optional<ImageModel> image = imageRepository.findByName(name);
         String filePath=image.get().getPath();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }
     
-    
+    public void deleteImageFromFileSystem(String name){
+        Optional<ImageModel> image = imageRepository.findByName(name);
+        ImageModel imageModel = image.get();
+        if(image.isPresent()){
+            File file = new File(imageModel.getPath());
+            file.delete();
+            imageRepository.deleteById(imageModel.getId());
+        }
+    }
+     
 }
