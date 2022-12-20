@@ -56,7 +56,7 @@ public class SeedingService implements CommandLineRunner {
         list.add(role_admin);
         
         List<RoleModel> list2 = new ArrayList();
-        list.add(role_user);
+        list2.add(role_user);
         
         UserModel admin = new UserModel("admin@gmail.com", new BCryptPasswordEncoder().encode("admin"), list);
         UserModel ceo = new UserModel("ceo@gmail.com", new BCryptPasswordEncoder().encode("ceo"), list);
@@ -69,22 +69,24 @@ public class SeedingService implements CommandLineRunner {
         departamentService.save(new DepartamentModel("Marketing"));
         departamentService.save(new DepartamentModel("Desenvolvimento"));
         
-        imageRepository.save(new ImageModel("image.png"));
+        imageRepository.save(new ImageModel("man_1.jpg", "image/jpg", "C:/front/frontend/fotos/man_1.jpg"));
+        imageRepository.save(new ImageModel("man_2.jpg", "image/jpg", "C:/front/frontend/fotos/man_2.jpg"));
+        imageRepository.save(new ImageModel("man_3.jpg", "image/jpg", "C:/front/frontend/fotos/man_3.jpg"));
+        imageRepository.save(new ImageModel("woman_1.jpg", "image/jpg", "C:/front/frontend/fotos/woman_1.jpg"));
+        imageRepository.save(new ImageModel("woman_2.jpg", "image/jpg", "C:/front/frontend/fotos/woman_2.jpg"));
+        imageRepository.save(new ImageModel("man_4.jpg", "image/jpg", "C:/front/frontend/fotos/man_4.jpg"));
+        imageRepository.save(new ImageModel("woman_3.jpg", "image/jpg", "C:/front/frontend/fotos/woman_3.jpg"));
+        imageRepository.save(new ImageModel("man_5.jpg", "image/jpg", "C:/front/frontend/fotos/man_5.jpg"));
                
         workerService.save(new WorkerModel("Jonas", "jonas@gmail.com",new ImageModel(1), 263454369, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("James","james@gmail.com",new ImageModel(1), 451254769, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com",new ImageModel(1), 194344961, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,new ImageModel(1), 452344966, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Emily", "emily@gmail.com",new ImageModel(1), 122344564, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,new ImageModel(1), 852399567, new DepartamentModel(2)));
-        workerService.save(new WorkerModel("Carol", "carol@gmail.com",new ImageModel(1), 454323159, new DepartamentModel(1)));
-        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com",new ImageModel(1), 352352367, new DepartamentModel(2)));
-        
-        /* Imagem path 
-        "name": "image.png",
-        "type": "image/png",
-        "path": "C:/front/frontend/fotos/image.png"
-        */
+        workerService.save(new WorkerModel("James","james@gmail.com",new ImageModel(2), 451254769, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carlos", "carlo@gmail.com",new ImageModel(3), 194344961, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Carla","carla@gmail.com" ,new ImageModel(4), 452344966, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Emily", "emily@gmail.com",new ImageModel(5), 122344564, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Steve","steve@gmail.com" ,new ImageModel(6), 852399567, new DepartamentModel(2)));
+        workerService.save(new WorkerModel("Carol", "carol@gmail.com",new ImageModel(7), 454323159, new DepartamentModel(1)));
+        workerService.save(new WorkerModel("Giovanne","giovanne@gmail.com",new ImageModel(8), 352352367, new DepartamentModel(2)));
+
     }
     
 }

@@ -22,7 +22,6 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
     
-    @Autowired
     private final PasswordEncoder passwordEncoder = null;
     
     public Optional<UserModel> findById(long id){

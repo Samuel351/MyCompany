@@ -15,7 +15,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -33,8 +32,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Conflito de nome(departamento ou funcionário), email ou sigla
-    @ExceptionHandler(value = {HttpClientErrorException.Conflict.class})
-    public ResponseEntity<Object> ApiHandlerException(HttpClientErrorException.Conflict e) {
+    @ExceptionHandler(value = {ApiConflictException.class})
+    public ResponseEntity<Object> ApiHandlerException(ApiConflictException e) {
         return new ResponseEntity<>(e, HttpStatus.CONFLICT);
     }
 
@@ -54,11 +53,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionList, HttpStatus.NOT_ACCEPTABLE);
     }
      
-       @ExceptionHandler(AccessDeniedException.class)
-        public final ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        ExceptionModel exceptionModel = new ExceptionModel(
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(exceptionModel, HttpStatus.FORBIDDEN);
+          
+    @ExceptionHandler(Exception.class)
+     public final ResponseEntity<Object> handleAccessDeniedException(Exception ex) {
+     ExceptionModel exceptionModel = new ExceptionModel(
+             ex.getMessage()
+     );
+     return new ResponseEntity<>(exceptionModel, HttpStatus.FORBIDDEN);
     }
 }

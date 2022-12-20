@@ -10,7 +10,6 @@ import com.project.enterprise.exception.ApiConflictException;
 import com.project.enterprise.model.DepartamentModel;
 import com.project.enterprise.model.WorkerModel;
 import java.util.List;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,18 +32,22 @@ public class DepartamentService {
     @Autowired
     WorkerRepository workerRepository;
     
-    public Optional <DepartamentModel> findById(Long id){
-    Optional <DepartamentModel> optionalDepartament = departamentRepository.findById(id);
-    if(!optionalDepartament.isPresent()){
-        throw new NoSuchElementException("There is no department with the entered ID");
-    }
-        List<WorkerDto> workerDtos = new ArrayList();
+    public DepartamentModel findById(Long id){
+        
+        DepartamentModel departamentModel = departamentRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Não existe departamento com esse ID"));
+
         List<WorkerModel> workers = workerRepository.findAllByDepartament(id);
-        for(WorkerModel worker : workers){
-            workerDtos.add(new WorkerDto(worker.getName(), worker.getEmail()));
+    
+        if(!workers.isEmpty())
+        {
+            List<WorkerDto> workerDtos = new ArrayList();
+            for(WorkerModel worker : workers){
+                workerDtos.add(new WorkerDto(worker.getName(), worker.getEmail()));
+            }
+            departamentModel.setWorkers(workerDtos);
         }
-        optionalDepartament.get().setWorkers(workerDtos);
-        return optionalDepartament;
+        return departamentModel;
     }
     
     public List<DepartamentModel> findAll(){
@@ -53,40 +56,49 @@ public class DepartamentService {
     
     @Transactional
     public DepartamentModel save(DepartamentModel departamentModel){
+        
         if(departamentRepository.existsByName(departamentModel.getName()))
         {
-            throw new ApiConflictException("A department with this name already exists");
+            throw new ApiConflictException("Esse departamento já existe");
         }
+        
+        // Cria sigla do departamento com base nas três primeiras letra do nome.
         String sigla = "";
-        for(int i=0; i<3; i++) {
-	sigla += Character.toString(departamentModel.getName().charAt(i));
+        
+        for(int i=0; i<3; i++) 
+        {
+            sigla += Character.toString(departamentModel.getName().charAt(i));
 	}
+        
         departamentModel.setSigla(sigla.toUpperCase());
         return departamentRepository.save(departamentModel);
     }
     
     @Transactional
-    public DepartamentModel edit(long id, DepartamentModel departamentModel){
-        Optional <DepartamentModel> optionalDepartament = departamentRepository.findById(id);
-        if(!optionalDepartament.isPresent()){
-             throw new NoSuchElementException("There is no department with the entered ID");
-        }
+    public DepartamentModel edit(long id, DepartamentModel editDepartament){
+        
+        // nowDepartament é o departamento atual
+        // editDepartament é o que vai substituir os valores do departamento atual
+        
+        DepartamentModel nowDepartament = departamentRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Não existe departamento com esse ID"));
         
         //Se o nome inserido for igual a um existente no DB e se for diferente do nome atual, lançar uma exceção
-        if(departamentRepository.existsByName(departamentModel.getName()) && !departamentModel.getName().equals(optionalDepartament.get().getName()))
+        if(departamentRepository.existsByName(editDepartament.getName()) && !editDepartament.getName().equals(nowDepartament.getName()))
         {
-            throw new ApiConflictException("A department with this name already exists");
+            throw new ApiConflictException("Esse departamento já existe");
         }
-        departamentModel.setId(id);
-        return departamentRepository.save(departamentModel);
+
+        return departamentRepository.save(editDepartament);
     }
     
     @Transactional
     public Message DeleteById(long id){
-        if(!departamentRepository.findById(id).isPresent()){
-            throw new NoSuchElementException("There is no department with the entered ID");
-        }
+        
+        departamentRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Não existe departamento com esse ID"));
+        
         departamentRepository.deleteById(id);
-        return new Message("Departament has been deleted");
+        return new Message("Departamento foi deletado");
     }
 }

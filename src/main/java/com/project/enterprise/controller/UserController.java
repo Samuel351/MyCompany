@@ -6,6 +6,7 @@ package com.project.enterprise.controller;
 
 import com.project.enterprise.model.UserModel;
 import com.project.enterprise.model.WorkerModel;
+import com.project.enterprise.service.TokenService;
 import com.project.enterprise.service.UserService;
 import com.project.enterprise.service.WorkerService;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +39,9 @@ public class UserController {
     @Autowired
     UserService userService;
     
+    @Autowired
+    TokenService tokenService;
+    
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserModel>> getUsers(){
@@ -48,9 +53,15 @@ public class UserController {
     public ResponseEntity<Object> getUser(@PathVariable(value = "id") long id){  
         return ResponseEntity.status(HttpStatus.OK).body(userService.findById(id));
     }
-    
+
     @PostMapping
     public ResponseEntity<Object> validateUser(@RequestBody @Valid UserModel userModel){ 
         return ResponseEntity.status(HttpStatus.OK).body(userService.ValidateUser(userModel));
+    }
+    
+    @PostMapping("/token")
+    public String generateToken(Authentication authentication){ 
+        String token= tokenService.generateToken(authentication);
+        return token;
     }
 }

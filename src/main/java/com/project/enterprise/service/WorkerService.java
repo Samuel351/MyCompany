@@ -6,11 +6,9 @@ package com.project.enterprise.service;
 
 import com.project.enterprise.Dto.Message;
 import com.project.enterprise.exception.ApiConflictException;
-import com.project.enterprise.model.ImageModel;
 import com.project.enterprise.model.WorkerModel;
 import com.project.enterprise.repository.DepartamentRepository;
 import java.util.List;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,99 +34,81 @@ public class WorkerService {
     @Autowired
     ImageService imageService;
     
-    public Optional <WorkerModel> findById(Long id){
-        Optional <WorkerModel> optionalWorker = workerRepository.findById(id);
-        if(!optionalWorker.isPresent()){
-            throw new NoSuchElementException("There is no worker with the entered ID");
-        }
-        return optionalWorker;
+    public WorkerModel findById(Long id){
+        return workerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Não existe trabalhador com esse ID"));
     }
     
     public List<WorkerModel> findAll(){
         return (List<WorkerModel>) workerRepository.findAll();
     }
     
-    public List<WorkerModel> findAllByDepartament(long id){
-        if(!departamentRepository.findById(id).isPresent()){
-            throw new NoSuchElementException("There is no worker with the entered ID");
-        }
-        return workerRepository.findAllByDepartament(id);
-    }
-    
     @Transactional
     public WorkerModel save(WorkerModel workerModel){
-        if(workerRepository.existsByEmail(workerModel.getEmail())){
-            throw new ApiConflictException(workerModel.getEmail() + " is already registred");
-        }
-        if(workerRepository.existsByRG(workerModel.getRG())){
-            throw new ApiConflictException(workerModel.getRG() + " is already registred");
-        }
-        if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent())
-        {
-            throw new NoSuchElementException("The department you are trying to assign to a worker does not exist");
-        }
-        
+        Validation(workerModel);
         return workerRepository.save(workerModel);
     }
     
-        @Transactional
+    @Transactional
     public WorkerModel saveWorkerAndPhoto(WorkerModel workerModel, MultipartFile file) throws IOException{
-        if(workerRepository.existsByEmail(workerModel.getEmail())){
-            throw new ApiConflictException(workerModel.getEmail() + " is already registred");
-        }
-        if(workerRepository.existsByRG(workerModel.getRG())){
-            throw new ApiConflictException(workerModel.getRG() + " is already registred");
-        }
-        if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent())
-        {
-            throw new NoSuchElementException("The department you are trying to assign to a worker does not exist");
-        }
-        ImageModel image = imageService.uploadImageToFileSystem(file);
-        workerModel.setPhoto(image);
+        Validation(workerModel);
+        workerModel.setPhoto(imageService.uploadImage(file));
         return workerRepository.save(workerModel);
     }
     
     @Transactional
-    public WorkerModel edit(long id, WorkerModel workerModel){
-        Optional <WorkerModel> optionalWorker = workerRepository.findById(id);
+    public WorkerModel edit(long id, WorkerModel editWorker){
         
-        if(!optionalWorker.isPresent()){
-            throw new NoSuchElementException("There is no worker with the entered ID");
-        }
-        if(workerRepository.existsByEmail(workerModel.getEmail()) && !optionalWorker.get().getEmail().equals(workerModel.getEmail())){
-            throw new ApiConflictException(workerModel.getEmail() + " is already registred");
-        }
+        // nowWorker, entidade com os atributos atuais.
+        // editWorker, entidade com os atributos novos que vão substituir os originais.
+
+        WorkerModel nowWorker = workerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Não existe trabalhador com esse ID"));
         
-        if(workerRepository.existsByRG(workerModel.getRG()) && optionalWorker.get().getRG() != workerModel.getRG()){
-            throw new ApiConflictException(workerModel.getEmail() + " is already registred");
-        }
-        if(!departamentRepository.findById(workerModel.getDepartament().getId()).isPresent()){
-            throw new NoSuchElementException("The department you are trying to assign to a worker does not exist");
+        departamentRepository.findById(editWorker.getDepartament().getId())
+            .orElseThrow(() -> new NoSuchElementException("O departamento que você está tentando atribuir o trabalhador não existe"));
+
+        if(workerRepository.existsByEmail(editWorker.getEmail()) && !nowWorker.getEmail().equals(editWorker.getEmail())){
+            throw new ApiConflictException("Esse email já está registrado");
         }
         
-        workerModel.setId(id);
-        return workerRepository.save(workerModel);
+        if(workerRepository.existsByRG(editWorker.getRG()) && nowWorker.getRG() != editWorker.getRG()){
+            throw new ApiConflictException(" Esse RG já está registrado");
+        }
+       
+        editWorker.setPhoto(nowWorker.getPhoto());
+        return workerRepository.save(editWorker);
     }
-    
+ 
     @Transactional
-    public WorkerModel editPhoto(long id, WorkerModel workerModel){
-        Optional <WorkerModel> optionalWorker = workerRepository.findById(id);
+    public WorkerModel editPhoto(long id, MultipartFile file) throws IOException{
         
-        if(!optionalWorker.isPresent()){
-            throw new NoSuchElementException("There is no worker with the entered ID");     
-        }
+        WorkerModel workerModel = workerRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Não existe trabalhador com esse ID"));
         
-        workerModel.setId(id);
+        id = workerModel.getPhoto().getId();
+        workerModel.setPhoto(imageService.patchImage(id, file));
         return workerRepository.save(workerModel);
     }
   
     @Transactional
     public Message DeleteById(long id){
-        Optional <WorkerModel> worker = workerRepository.findById(id);
-        if(!worker.isPresent()){
-            throw new NoSuchElementException("There is no worker with the entered ID");
-        }
+        
+        WorkerModel workerModel = workerRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Não existe trabalhador com esse ID"));
+        
+        imageService.deleteImage(workerModel.getPhoto().getId());
         workerRepository.deleteById(id);
-        return new Message("Worker has been deleted");
+        return new Message("Trabalhador deletado");
+    }
+    
+    // Função para lançar exceções
+    public void Validation(WorkerModel workerModel){
+        if(workerRepository.existsByEmail(workerModel.getEmail())){
+            throw new ApiConflictException("Esse email já está registrado");
+        }
+        if(workerRepository.existsByRG(workerModel.getRG())){
+            throw new ApiConflictException(" Esse RG já está registrado");
+        }
     }
 }

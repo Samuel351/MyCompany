@@ -4,7 +4,6 @@
  */
 package com.project.enterprise.controller;
 
-import com.project.enterprise.model.ImageDBModel;
 import com.project.enterprise.service.ImageService;
 import com.project.enterprise.service.WorkerService;
 import java.io.IOException;
@@ -27,40 +26,24 @@ import org.springframework.web.multipart.MultipartFile;
  */
 
 @RestController
-@RequestMapping("/photos")
+@RequestMapping("/photo")
 @CrossOrigin(origins = "http://localhost:4200")
 public class ImageController {
     
     @Autowired
     ImageService imageService;
     
-    @Autowired
-    WorkerService workerService;
     
-    // Salvar imagens no banco de dados
-    @PostMapping
-    public ResponseEntity<?> uploadImageToDatabase(@RequestParam("file")MultipartFile file) throws IOException{
-        return ResponseEntity.status(HttpStatus.OK).body(imageService.UploadToDatabase(file));
-    }
-    
-    @GetMapping("/{name}")
-        public ResponseEntity<?> downloadImageFromDatabase(@PathVariable(value = "name") String name) throws IOException {
-            ImageDBModel imageData = imageService.downloadImageFromDatabase(name);
-            return ResponseEntity.status(HttpStatus.OK)
-                            .contentType(MediaType.valueOf(imageData.getType()))
-                            .body(imageData.getData());
-    }
-   
     // Salvar imagens no sistema de arquivos
-    @PostMapping("/file")
+    @PostMapping
     public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("file")MultipartFile file) throws IOException {
             return ResponseEntity.status(HttpStatus.OK)
-                            .body(imageService.uploadImageToFileSystem(file));
+                            .body(imageService.uploadImage(file));
     }
 
-    @GetMapping("/file/{name}")
+    @GetMapping("/{name}")
     public ResponseEntity<?> downloadImageFromFileSystem(@PathVariable(value = "name") String name) throws IOException {
-            byte[] imageData=imageService.downloadImageFromFileSystem(name);
+            byte[] imageData=imageService.downloadImage(name);
             return ResponseEntity.status(HttpStatus.OK)
                             .contentType(MediaType.valueOf("image/png"))
                             .body(imageData);

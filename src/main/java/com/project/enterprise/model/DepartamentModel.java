@@ -34,7 +34,7 @@ public class DepartamentModel implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
     
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank(message = "Name não pode ser vazio")
     private String name;
     
     private String sigla;

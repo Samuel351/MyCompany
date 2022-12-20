@@ -46,18 +46,18 @@ public class WorkerModel implements Serializable {
     @Column(name = "worker_id")
     private long id;
     
-    @NotBlank(message = "Nome cannot be empty")
+    @NotBlank(message = "Nome não pode ser vazio")
     private String name;
     
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Email pattern invalid")
+    @NotBlank(message = "Email não pode ser vazio")
+    @Email(message = "Email inválido")
     private String email;
     
     @JoinColumn
     @OneToOne
     private ImageModel photo;
 
-    @NotNull(message = "RG cannot be empty")
+    @NotNull(message = "RG não pode ser vazio")
     @Min(9)
     private int RG;
     

@@ -11,6 +11,7 @@ import com.project.enterprise.service.WorkerService;
 import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,16 +45,14 @@ public class WorkerController {
     @Autowired
     ImageService imageService;
     
-    /*
-    @PostMapping
-        public ResponseEntity<Object> insertWorker(@RequestBody @Valid WorkerModel workerModel) throws IOException{
-            return ResponseEntity.status(HttpStatus.CREATED).body(workerService.save(workerModel));
-    }*/
+    @Autowired
+    private Validator validator;
     
-     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-        public ResponseEntity<Object> insertWorker(@RequestPart("worker") String worker, @RequestPart(value="file" ,required = false) MultipartFile file) throws IOException{
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+        public ResponseEntity<Object> insertWorker(@RequestPart(value = "worker") String worker, @RequestPart(value="file") MultipartFile file) throws IOException{
             ObjectMapper map = new ObjectMapper();
             WorkerModel workerModel = map.readValue(worker, WorkerModel.class);
+            validator.validate(workerModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(workerService.saveWorkerAndPhoto(workerModel, file));
     }
     
@@ -76,9 +75,9 @@ public class WorkerController {
     }
     
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateWorkerPhoto(@PathVariable(value = "id") long id, @RequestBody WorkerModel workerModel){
-        return ResponseEntity.status(HttpStatus.OK).body(workerService.editPhoto(id, workerModel));
+    @PatchMapping(value="/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Object> patchPhoto(@PathVariable(value = "id") long id, @RequestPart("file") MultipartFile file) throws IOException{
+        return ResponseEntity.status(HttpStatus.OK).body(workerService.editPhoto(id, file));
     }
     
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

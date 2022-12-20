@@ -4,15 +4,12 @@
  */
 package com.project.enterprise.service;
 
-import com.project.enterprise.Dto.Message;
-import com.project.enterprise.model.ImageDBModel;
 import com.project.enterprise.model.ImageModel;
-import com.project.enterprise.repository.ImageDBRepository;
 import com.project.enterprise.repository.ImageRepository;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,60 +26,64 @@ public class ImageService {
     @Autowired
     ImageRepository imageRepository;
     
-    @Autowired
-    ImageDBRepository imageDBRepository;
-          
-    // Salvar imagem no banco de dados
-    public Message UploadToDatabase(MultipartFile file) throws IOException {
-        ImageDBModel imageDB = imageDBRepository.save(new ImageDBModel(file.getOriginalFilename(), file.getContentType(), file.getBytes()));
-        return new Message("File upload: " + imageDB.getName());
-    }
-    
-    public ImageDBModel downloadImageFromDatabase(String name){
-        Optional<ImageDBModel> image = imageDBRepository.findByName(name);
-        if(image.isPresent()){
-            return image.get();
-        }
-        
-        return null;
-    }
-    
-    public void deleteImageFromDatabase(long id){
-         if(imageDBRepository.findById(id).isPresent()){
-             imageDBRepository.deleteById(id);
-         }
-    }
-     
-     
+  
     // Salvar imagem nas pastas do computador
-    public ImageModel uploadImageToFileSystem(MultipartFile file) throws IOException {
+    public ImageModel uploadImage(MultipartFile file) throws IOException {
     String filePath=PATH+file.getOriginalFilename();
-
-        ImageModel image=imageRepository.save(new ImageModel(file.getOriginalFilename(), file.getContentType(), filePath));
+    
+        ImageModel imageModel=imageRepository.save(new ImageModel(file.getOriginalFilename(), file.getContentType(), filePath));
 
         file.transferTo(new File(filePath));
 
-        if (image != null) {
-            return image;
+        if (imageModel != null) {
+            return imageModel;
         }
         return null;
     }
+    
+    // Troca por foto nova e deleta a foto existente
+    public ImageModel patchImage(long id, MultipartFile file) throws IOException {
+        String filePath=PATH+file.getOriginalFilename();
+  
+         ImageModel imageModel = imageRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Foto não encontrada"));
 
-    public byte[] downloadImageFromFileSystem(String name) throws IOException {
-        Optional<ImageModel> image = imageRepository.findByName(name);
-        String filePath=image.get().getPath();
-        byte[] images = Files.readAllBytes(new File(filePath).toPath());
-        return images;
+        File file_path = new File(imageModel.getPath());
+        file_path.delete();
+        
+        imageModel.setId(id);
+        imageModel.setName(file.getOriginalFilename());
+        imageModel.setType(file.getContentType());
+        imageModel.setPath(filePath);
+        
+        imageRepository.save(imageModel);
+
+        file.transferTo(new File(filePath));
+
+        return imageModel;
+        
     }
     
-    public void deleteImageFromFileSystem(String name){
-        Optional<ImageModel> image = imageRepository.findByName(name);
-        ImageModel imageModel = image.get();
-        if(image.isPresent()){
-            File file = new File(imageModel.getPath());
-            file.delete();
-            imageRepository.deleteById(imageModel.getId());
-        }
+    public byte[] downloadImage(String name) throws IOException {
+
+        ImageModel imageModel = imageRepository.findByName(name)
+            .orElseThrow(() -> new NoSuchElementException("Foto não encontrada"));
+        
+        byte[] image = Files.readAllBytes(new File(imageModel.getPath()).toPath());
+        
+        return image;
     }
-     
+    
+    public void deleteImage(long id){
+        
+        ImageModel imageModel = imageRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Foto não encontrada"));
+        
+        File file = new File(imageModel.getPath());
+        file.delete();
+        imageRepository.deleteById(imageModel.getId());
+
+    }
 }
+           
+   
